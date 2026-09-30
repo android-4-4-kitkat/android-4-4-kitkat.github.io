@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安卓</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;width:100%;overflow:hidden}
+body{
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:system-ui,sans-serif;
+  position:relative;
+}
+.big{
+  font-size:40vw;
+  font-weight:900;
+  color:#3ddc84;
+  text-shadow:0 0 40px rgba(61,220,132,0.6);
+  user-select:none;
+  line-height:1;
+  cursor:pointer;
+}
+.foot{
+  position:fixed;
+  bottom:24px;
+  left:0;right:0;
+  text-align:center;
+  color:rgba(255,255,255,0.5);
+  font-size:14px;
+  letter-spacing:2px;
+}
+.secret{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99;
+  cursor:pointer;
+}
+.secret span{
+  font-size:40vw;
+  font-weight:900;
+  color:#ff0000;
+  text-shadow:0 0 40px rgba(255,0,0,0.7);
+  line-height:1;
+  user-select:none;
+}
+</style>
+</head>
+<body>
+  <div class="big" id="main">安卓</div>
+  <div class="foot">由 android-4-4-kitkat 制作</div>
+
+  <div class="secret" id="secret">
+    <span>肥美</span>
+  </div>
+
+<script>
+  let count = 0;
+  let timer = null;
+  const main = document.getElementById('main');
+  const secret = document.getElementById('secret');
+
+  main.addEventListener('click', () => {
+    count++;
+    clearTimeout(timer);
+    // 2秒内没继续点就重置
+    timer = setTimeout(() => { count = 0; }, 2000);
+    if (count >= 5) {
+      secret.style.display = 'flex';
+      count = 0;
+    }
+  });
+
+  // 点红色"肥美"任意位置返回
+  secret.addEventListener('click', () => {
+    secret.style.display = 'none';
+  });
+</script>
+</body>
+</html>
