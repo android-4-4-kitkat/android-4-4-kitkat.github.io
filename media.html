@@ -18,7 +18,11 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ===== 顶部标题 ===== */
+    body.locked {
+      overflow: hidden;
+      height: 100vh;
+    }
+
     .site-title {
       text-align: center;
       font-size: 32px;
@@ -28,9 +32,9 @@
       text-shadow: 0 0 20px rgba(46, 204, 113, 0.4), 0 0 40px rgba(46, 204, 113, 0.1);
       padding: 10px 0 20px;
       user-select: none;
+      cursor: pointer;
     }
 
-    /* ===== 右上角背景音乐控制条 ===== */
     .bgm-bar {
       position: fixed;
       top: 14px;
@@ -46,6 +50,7 @@
       border-radius: 40px;
       padding: 6px 14px 6px 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      transition: opacity 0.3s, border-color 0.3s;
     }
 
     .bgm-bar .bgm-label { font-size: 12px; color: #8fbf9f; letter-spacing: 1px; }
@@ -61,12 +66,29 @@
       transition: all 0.25s;
       font-weight: 600;
       letter-spacing: 1px;
+      white-space: nowrap;
     }
 
     .bgm-bar .bgm-btn:hover { background: rgba(46, 204, 113, 0.15); }
     .bgm-bar .bgm-btn.active { background: #2ecc71; color: #0b0f0c; }
 
-    /* ===== 左上角音乐播放提示 ===== */
+    .bgm-bar.disabled {
+      opacity: 0.55;
+      border-color: rgba(120, 130, 120, 0.25);
+    }
+
+    .bgm-bar.disabled .bgm-label { color: #6a7a6a; }
+
+    .bgm-bar.disabled .bgm-btn {
+      color: #6a7a6a;
+      cursor: not-allowed;
+      background: transparent;
+      font-size: 12px;
+      letter-spacing: 0;
+    }
+
+    .bgm-bar.disabled .bgm-btn:hover { background: transparent; }
+
     .music-toast {
       position: fixed;
       top: 14px;
@@ -80,10 +102,10 @@
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(46, 204, 113, 0.35);
       border-radius: 30px;
-      padding: 8px 16px 8px 12px;
+      padding: 6px 8px 6px 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(46, 204, 113, 0.1);
       transition: opacity 0.3s, transform 0.3s;
-      max-width: 200px;
+      max-width: 240px;
     }
 
     .music-toast.show { display: flex; }
@@ -91,7 +113,10 @@
     .music-toast .toast-icon {
       font-size: 16px;
       animation: toastPulse 1.2s ease-in-out infinite;
+      flex-shrink: 0;
     }
+
+    .music-toast.paused .toast-icon { animation-play-state: paused; opacity: 0.6; }
 
     @keyframes toastPulse {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -105,10 +130,35 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 140px;
+      max-width: 120px;
     }
 
-    /* ===== 分类标签栏 ===== */
+    .music-toast .toast-stop {
+      background: transparent;
+      border: 1px solid rgba(46, 204, 113, 0.35);
+      color: #2ecc71;
+      font-size: 14px;
+      line-height: 1;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      padding: 0;
+      font-family: inherit;
+    }
+
+    .music-toast .toast-stop:hover {
+      background: rgba(46, 204, 113, 0.2);
+      border-color: #2ecc71;
+    }
+
+    .music-toast .toast-stop:active { transform: scale(0.9); }
+
     .tab-bar {
       display: flex;
       justify-content: center;
@@ -137,7 +187,10 @@
       box-shadow: 0 0 20px rgba(46, 204, 113, 0.3); font-weight: 700;
     }
 
-    /* ===== 内容网格 ===== */
+    .tab-bar button.hidden-tab {
+      display: none;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -198,7 +251,169 @@
     .card.music-card.playing { border-color: #2ecc71; box-shadow: 0 0 28px rgba(46, 204, 113, 0.25); }
     .card.music-card.playing .music-name { color: #2ecc71; font-weight: 700; }
 
-    /* ===== 底部版权 ===== */
+    .nazi-grid {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 30px 0;
+      min-height: 50vh;
+    }
+
+    .nazi-grid.show { display: flex; }
+
+    .nazi-btn {
+      position: relative;
+      width: min(78vw, 420px);
+      height: min(78vw, 420px);
+      max-height: 60vh;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 60, 60, 0.6);
+      background:
+        radial-gradient(circle at 50% 40%, rgba(255, 80, 80, 0.35) 0%, rgba(80, 0, 0, 0.9) 70%),
+        linear-gradient(145deg, #2a0a0a, #0e0505);
+      color: #ffdede;
+      font-size: clamp(24px, 6vw, 44px);
+      font-weight: 900;
+      letter-spacing: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10%;
+      font-family: inherit;
+      box-shadow:
+        0 0 30px rgba(255, 60, 60, 0.5),
+        0 0 60px rgba(255, 30, 30, 0.35),
+        inset 0 0 40px rgba(255, 80, 80, 0.35);
+      text-shadow:
+        0 0 12px rgba(255, 90, 90, 0.9),
+        0 0 24px rgba(255, 40, 40, 0.6);
+      transition: transform 0.12s ease, box-shadow 0.25s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      animation: naziGlow 1.8s ease-in-out infinite;
+    }
+
+    @keyframes naziGlow {
+      0%, 100% {
+        box-shadow:
+          0 0 30px rgba(255, 60, 60, 0.5),
+          0 0 60px rgba(255, 30, 30, 0.35),
+          inset 0 0 40px rgba(255, 80, 80, 0.35);
+      }
+      50% {
+        box-shadow:
+          0 0 45px rgba(255, 80, 80, 0.75),
+          0 0 90px rgba(255, 40, 40, 0.5),
+          inset 0 0 55px rgba(255, 100, 100, 0.5);
+      }
+    }
+
+    .nazi-btn:hover {
+      border-color: rgba(255, 90, 90, 0.9);
+    }
+
+    .nazi-btn:active {
+      transform: scale(0.94);
+    }
+
+    .nazi-btn.pressed {
+      animation: naziFlash 0.18s ease;
+    }
+
+    @keyframes naziFlash {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.92); }
+      100% { transform: scale(1); }
+    }
+
+    .beimadai-grid {
+      display: none;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+
+    .beimadai-grid.show { display: block; }
+
+    .beimadai-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .beimadai-col {
+      background: rgba(16, 24, 18, 0.6);
+      border: 1px solid rgba(46, 204, 113, 0.2);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .beimadai-col-title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #2ecc71;
+      text-shadow: 0 0 16px rgba(46, 204, 113, 0.4);
+      padding-bottom: 14px;
+      user-select: none;
+    }
+
+    .beimadai-section-title {
+      text-align: center;
+      font-size: 14px;
+      color: #8fbf9f;
+      letter-spacing: 3px;
+      padding: 14px 0 10px;
+      user-select: none;
+    }
+
+    .beimadai-divider {
+      height: 2px;
+      margin: 4px 0;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(46, 204, 113, 0.15) 15%,
+        rgba(46, 204, 113, 0.7) 50%,
+        rgba(46, 204, 113, 0.15) 85%,
+        transparent 100%);
+      box-shadow: 0 0 10px rgba(46, 204, 113, 0.35);
+      border-radius: 1px;
+      position: relative;
+    }
+
+    .beimadai-divider::after {
+      content: "◆";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #2ecc71;
+      font-size: 10px;
+      background: rgba(16, 24, 18, 1);
+      padding: 0 8px;
+      text-shadow: 0 0 10px rgba(46, 204, 113, 0.8);
+    }
+
+    .beimadai-media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      padding: 4px 0 8px;
+    }
+
+    .beimadai-media-grid .card {
+      aspect-ratio: 1 / 1;
+    }
+
+    .beimadai-media-grid .card.video-card {
+      aspect-ratio: 16 / 9;
+    }
+
     .footer {
       text-align: center;
       color: rgba(46, 204, 113, 0.35);
@@ -206,9 +421,6 @@
       margin-top: 50px; padding-bottom: 10px; user-select: none;
     }
 
-    /* ============================================================
-       图片/视频模态框
-       ============================================================ */
     .modal {
       position: fixed; inset: 0;
       background: rgba(0, 0, 0, 0.94);
@@ -257,9 +469,6 @@
       user-select: none; white-space: nowrap;
     }
 
-    /* ============================================================
-       音乐播放弹窗
-       ============================================================ */
     .music-modal {
       position: fixed; inset: 0;
       background: rgba(0, 0, 0, 0.94);
@@ -376,7 +585,6 @@
 
     .music-controls button.play-pause:hover { background: rgba(46, 204, 113, 0.25); }
 
-    /* 右侧音乐列表 */
     .music-list-box {
       width: 220px; flex-shrink: 0;
       background: rgba(16, 24, 18, 0.95);
@@ -433,20 +641,335 @@
       background: rgba(46, 204, 113, 0.5);
     }
 
-    /* ===== 响应式 ===== */
+    .lock-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #0b0f0c;
+      background-image: radial-gradient(circle at 30% 30%, rgba(30, 80, 50, 0.25) 0%, transparent 55%),
+                        radial-gradient(circle at 75% 75%, rgba(20, 120, 60, 0.18) 0%, transparent 55%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .lock-screen.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .lock-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      font-size: 38px;
+      color: #fff;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.3s, transform 0.3s;
+      user-select: none;
+      z-index: 10000;
+    }
+
+    .lock-close-btn:hover { color: #2ecc71; transform: rotate(90deg); }
+
+    .lock-title {
+      font-size: 20px;
+      letter-spacing: 6px;
+      color: #2ecc71;
+      text-shadow: 0 0 20px rgba(46, 204, 113, 0.4);
+      margin-bottom: 10px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .lock-subtitle {
+      font-size: 12px;
+      color: #6a8a70;
+      letter-spacing: 3px;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .lock-display {
+      width: 260px;
+      max-width: 80vw;
+      height: 60px;
+      border-radius: 14px;
+      background: rgba(16, 24, 18, 0.9);
+      border: 1px solid rgba(46, 204, 113, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(46, 204, 113, 0.08);
+      transition: border-color 0.3s, box-shadow 0.3s;
+      overflow: hidden;
+    }
+
+    .lock-display .digit {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2ecc71;
+      text-shadow: 0 0 12px rgba(46, 204, 113, 0.5);
+      min-width: 22px;
+      text-align: center;
+      animation: digitIn 0.15s ease;
+    }
+
+    @keyframes digitIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .lock-display.error {
+      border-color: #e74c3c;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(231, 76, 60, 0.3);
+      animation: shake 0.4s ease;
+    }
+
+    .lock-display.error .digit {
+      color: #e74c3c;
+      text-shadow: 0 0 12px rgba(231, 76, 60, 0.5);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-7px); }
+      80% { transform: translateX(7px); }
+    }
+
+    .lock-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      width: 260px;
+      max-width: 80vw;
+    }
+
+    .lock-keypad button {
+      height: 64px;
+      border-radius: 16px;
+      background: rgba(20, 30, 24, 0.85);
+      border: 1px solid rgba(46, 204, 113, 0.25);
+      color: #d0f0d8;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(6px);
+      -webkit-tap-highlight-color: transparent;
+      font-family: inherit;
+    }
+
+    .lock-keypad button:hover {
+      border-color: #2ecc71;
+      color: #2ecc71;
+      background: rgba(46, 204, 113, 0.12);
+    }
+
+    .lock-keypad button:active {
+      transform: scale(0.94);
+      background: rgba(46, 204, 113, 0.25);
+    }
+
+    .lock-keypad button.action {
+      font-size: 15px;
+      letter-spacing: 2px;
+    }
+
+    .lock-keypad button.del {
+      color: #e0a060;
+      border-color: rgba(224, 160, 96, 0.3);
+    }
+
+    .lock-keypad button.del:hover {
+      color: #ffb060;
+      border-color: #ffb060;
+      background: rgba(224, 160, 96, 0.12);
+    }
+
+    .lock-keypad button.ok {
+      color: #2ecc71;
+      border-color: rgba(46, 204, 113, 0.5);
+      background: rgba(46, 204, 113, 0.1);
+    }
+
+    .lock-keypad button.ok:hover {
+      background: rgba(46, 204, 113, 0.25);
+    }
+
+    .egg-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 10001;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 50%, rgba(20, 80, 50, 0.35) 0%, rgba(6, 14, 10, 0.96) 70%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    .egg-screen.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .egg-screen.fade-out {
+      opacity: 0;
+    }
+
+    .egg-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60vmin;
+      height: 60vmin;
+      border-radius: 50%;
+      border: 2px solid rgba(46, 204, 113, 0.35);
+      box-shadow:
+        0 0 60px rgba(46, 204, 113, 0.5),
+        inset 0 0 60px rgba(46, 204, 113, 0.25);
+      animation: eggRingPulse 2.2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .egg-ring::before,
+    .egg-ring::after {
+      content: "";
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      border: 1px solid rgba(46, 204, 113, 0.25);
+      animation: eggRingPulse 2.2s ease-in-out infinite;
+    }
+
+    .egg-ring::after {
+      inset: -40px;
+      border-color: rgba(46, 204, 113, 0.15);
+      animation-delay: 0.3s;
+    }
+
+    @keyframes eggRingPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.9;
+      }
+      50% {
+        transform: scale(1.08);
+        opacity: 0.5;
+      }
+    }
+
+    .egg-icon {
+      font-size: clamp(60px, 14vmin, 110px);
+      color: #2ecc71;
+      text-shadow:
+        0 0 30px rgba(46, 204, 113, 0.9),
+        0 0 60px rgba(46, 204, 113, 0.5),
+        0 0 100px rgba(46, 204, 113, 0.3);
+      animation: eggIconPop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+      z-index: 2;
+    }
+
+    @keyframes eggIconPop {
+      0% { transform: scale(0) rotate(-90deg); opacity: 0; }
+      70% { transform: scale(1.15) rotate(8deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .egg-title {
+      margin-top: 24px;
+      font-size: clamp(22px, 5.5vmin, 42px);
+      font-weight: 900;
+      letter-spacing: clamp(4px, 1.5vmin, 10px);
+      color: #2ecc71;
+      text-shadow:
+        0 0 20px rgba(46, 204, 113, 0.9),
+        0 0 40px rgba(46, 204, 113, 0.6);
+      z-index: 2;
+      animation: eggTextIn 1s ease 0.2s both;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    .egg-subtitle {
+      margin-top: 14px;
+      font-size: clamp(11px, 2.2vmin, 15px);
+      letter-spacing: clamp(3px, 1vmin, 6px);
+      color: #8fbf9f;
+      z-index: 2;
+      animation: eggTextIn 1s ease 0.5s both;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    @keyframes eggTextIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+        letter-spacing: 30px;
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .egg-line {
+      margin-top: 28px;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #2ecc71, transparent);
+      box-shadow: 0 0 12px rgba(46, 204, 113, 0.7);
+      z-index: 2;
+      animation: eggLineGrow 1.2s ease 0.7s forwards;
+    }
+
+    @keyframes eggLineGrow {
+      from { width: 0; }
+      to { width: 60vw; max-width: 400px; }
+    }
+
     @media (max-width: 700px) {
-      .site-title { font-size: 22px; letter-spacing: 4px; padding-top: 40px; }
+      .site-title { font-size: 22px; letter-spacing: 4px; padding-top: 60px; }
 
       .bgm-bar {
-        top: 8px; right: 8px; padding: 4px 10px 4px 12px;
+        top: 8px; right: 8px;
+        padding: 4px 8px 4px 10px;
+        gap: 6px;
+        max-width: calc(100vw - 16px);
+        white-space: nowrap;
+        flex-wrap: nowrap;
       }
-      .bgm-bar .bgm-label { display: none; }
+      .bgm-bar .bgm-label { font-size: 11px; letter-spacing: 0; }
       .bgm-bar .bgm-btn { font-size: 12px; padding: 3px 8px; }
+      .bgm-bar.disabled .bgm-btn { font-size: 11px; }
 
       .music-toast {
-        top: 8px; left: 8px; padding: 6px 12px 6px 10px;
+        top: 48px; left: 8px;
+        padding: 5px 7px 5px 10px;
+        gap: 6px;
+        max-width: calc(100vw - 16px);
       }
-      .music-toast .toast-text { font-size: 11px; max-width: 100px; }
+      .music-toast .toast-text { font-size: 11px; max-width: 110px; }
+      .music-toast .toast-icon { font-size: 14px; }
+      .music-toast .toast-stop { width: 20px; height: 20px; font-size: 13px; }
 
       .grid {
         grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -476,10 +999,24 @@
       .music-list-box { width: 100%; flex: 1; min-height: 0; padding: 12px 0; }
       .music-list-box .list-title { padding: 0 14px 8px; font-size: 12px; }
       .music-list-box .list-item { padding: 10px 14px; font-size: 13px; }
+
+      .beimadai-columns {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .beimadai-col-title { font-size: 17px; letter-spacing: 3px; }
+      .beimadai-media-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
     }
 
     @media (max-width: 380px) {
       .grid { grid-template-columns: repeat(2, 1fr); }
+      .lock-keypad button { height: 56px; font-size: 22px; }
+      .lock-display { height: 54px; margin-bottom: 24px; }
+      .lock-title { font-size: 17px; letter-spacing: 4px; }
+      .lock-keypad { gap: 10px; }
+      .bgm-bar .bgm-label { display: none; }
+      .beimadai-media-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     ::-webkit-scrollbar { width: 6px; }
@@ -490,45 +1027,115 @@
     ::-webkit-scrollbar-thumb:hover { background: rgba(46, 204, 113, 0.6); }
   </style>
 </head>
-<body>
+<body class="locked">
 
-  <!-- ===== 左上角音乐播放提示 ===== -->
+  <div class="lock-screen" id="lockScreen">
+    <div class="lock-title">肥美音乐图片视频集合网站</div>
+    <div class="lock-subtitle">请输入 4 位密码</div>
+
+    <div class="lock-display" id="lockDisplay"></div>
+
+    <div class="lock-keypad" id="lockKeypad">
+      <button onclick="lockInput('1')">1</button>
+      <button onclick="lockInput('2')">2</button>
+      <button onclick="lockInput('3')">3</button>
+      <button onclick="lockInput('4')">4</button>
+      <button onclick="lockInput('5')">5</button>
+      <button onclick="lockInput('6')">6</button>
+      <button onclick="lockInput('7')">7</button>
+      <button onclick="lockInput('8')">8</button>
+      <button onclick="lockInput('9')">9</button>
+      <button class="action del" onclick="lockDelete()">删除</button>
+      <button onclick="lockInput('0')">0</button>
+      <button class="action ok" onclick="lockConfirm()">确认</button>
+    </div>
+  </div>
+
+  <div class="lock-screen" id="beimadaiLock" style="display:none;">
+    <span class="lock-close-btn" onclick="closeBeimadaiLock()">×</span>
+    <div class="lock-title">背麻袋</div>
+    <div class="lock-subtitle">请输入 4 位密码</div>
+
+    <div class="lock-display" id="beimadaiLockDisplay"></div>
+
+    <div class="lock-keypad" id="beimadaiKeypad">
+      <button onclick="beimadaiInput('1')">1</button>
+      <button onclick="beimadaiInput('2')">2</button>
+      <button onclick="beimadaiInput('3')">3</button>
+      <button onclick="beimadaiInput('4')">4</button>
+      <button onclick="beimadaiInput('5')">5</button>
+      <button onclick="beimadaiInput('6')">6</button>
+      <button onclick="beimadaiInput('7')">7</button>
+      <button onclick="beimadaiInput('8')">8</button>
+      <button onclick="beimadaiInput('9')">9</button>
+      <button class="action del" onclick="beimadaiDelete()">删除</button>
+      <button onclick="beimadaiInput('0')">0</button>
+      <button class="action ok" onclick="beimadaiConfirm()">确认</button>
+    </div>
+  </div>
+
+  <div class="egg-screen" id="eggScreen">
+    <div class="egg-ring"></div>
+    <div class="egg-icon">✦</div>
+    <div class="egg-title">恭喜你发现了彩蛋</div>
+    <div class="egg-subtitle">E A S T E R &nbsp; E G G &nbsp; F O U N D</div>
+    <div class="egg-line"></div>
+  </div>
+
   <div class="music-toast" id="musicToast">
     <span class="toast-icon">♪</span>
     <span class="toast-text" id="toastText">正在播放</span>
+    <button class="toast-stop" id="toastStop" onclick="stopMusic(false)" title="停止播放">✕</button>
   </div>
 
-  <!-- ===== 右上角背景音乐控制 ===== -->
   <div class="bgm-bar" id="bgmBar">
     <span class="bgm-label">背景音</span>
     <button class="bgm-btn active" id="bgmToggle" onclick="toggleBgm()">关闭</button>
   </div>
 
-  <!-- ===== 顶部标题 ===== -->
-  <h1 class="site-title">肥美音乐图片视频集合网站</h1>
+  <h1 class="site-title" id="siteTitle">肥美音乐图片视频集合网站</h1>
 
-  <!-- ===== 分类标签 ===== -->
   <div class="tab-bar">
     <button class="active" onclick="switchTab('img', this)">图片</button>
     <button onclick="switchTab('video', this)">视频</button>
     <button onclick="switchTab('music', this)">音乐</button>
+    <button class="hidden-tab" id="beimadaiTab" onclick="switchTab('beimadai', this)">背麻袋</button>
+    <button onclick="switchTab('nazi', this)">纳粹</button>
   </div>
 
-  <!-- ===== 图片网格 ===== -->
   <div class="grid" id="imgGrid"></div>
-
-  <!-- ===== 视频网格 ===== -->
   <div class="grid" id="videoGrid" style="display:none"></div>
-
-  <!-- ===== 音乐网格 ===== -->
   <div class="grid" id="musicGrid" style="display:none"></div>
 
-  <!-- ===== 底部版权 ===== -->
+  <div class="beimadai-grid" id="beimadaiGrid">
+    <div class="beimadai-columns">
+      <div class="beimadai-col">
+        <div class="beimadai-col-title">黄天成背麻袋</div>
+        <div class="beimadai-section-title">图 片</div>
+        <div class="beimadai-divider"></div>
+        <div class="beimadai-media-grid" id="htcImgGrid"></div>
+        <div class="beimadai-section-title">视 频</div>
+        <div class="beimadai-divider"></div>
+        <div class="beimadai-media-grid" id="htcVideoGrid"></div>
+      </div>
+      <div class="beimadai-col">
+        <div class="beimadai-col-title">钟承轩背麻袋</div>
+        <div class="beimadai-section-title">图 片</div>
+        <div class="beimadai-divider"></div>
+        <div class="beimadai-media-grid" id="zcxImgGrid"></div>
+        <div class="beimadai-section-title">视 频</div>
+        <div class="beimadai-divider"></div>
+        <div class="beimadai-media-grid" id="zcxVideoGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nazi-grid" id="naziGrid">
+    <button class="nazi-btn" id="naziBtn" onclick="naziPlay()">粹一下杰瑞</button>
+  </div>
+
   <div class="footer">android-4-4-kitkat制作</div>
 
-  <!-- ============================================================
-       图片/视频模态框
-       ============================================================ -->
   <div class="modal" id="mediaModal">
     <span class="close-btn" onclick="closeMediaModal()">×</span>
     <span class="media-nav prev" id="mediaPrev" onclick="prevMedia()">❮</span>
@@ -538,9 +1145,6 @@
     <div class="media-hint" id="mediaHint">点击空白处或 × 关闭</div>
   </div>
 
-  <!-- ============================================================
-       音乐播放弹窗
-       ============================================================ -->
   <div class="music-modal" id="musicModal">
     <span class="close-btn" onclick="closeMusicModal()">×</span>
     <div class="music-modal-content">
@@ -571,93 +1175,258 @@
     </div>
   </div>
 
-  <!-- ===== 背景音乐（隐藏） ===== -->
   <audio id="bgmAudio" src="ng.mp3" loop preload="auto"></audio>
-
-  <!-- ===== 独立音乐播放器（隐藏） ===== -->
   <audio id="musicPlayer" preload="auto"></audio>
+  <audio id="naziAudio" src="click.mp3" preload="auto"></audio>
 
   <script>
-    /* ============================================================
-       素材配置（已更新：图片 7 张，视频 2 个）
-       ============================================================ */
-    const IMAGES = ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png"];
+    (function () {
+      const PASSWORD = "7891";
+      let input = "";
+      const lockScreen = document.getElementById("lockScreen");
+      const lockDisplay = document.getElementById("lockDisplay");
+
+      function renderDisplay() {
+        lockDisplay.innerHTML = "";
+        for (let i = 0; i < input.length; i++) {
+          const span = document.createElement("span");
+          span.className = "digit";
+          span.textContent = input[i];
+          lockDisplay.appendChild(span);
+        }
+      }
+
+      window.lockInput = function (num) {
+        if (input.length >= 4) return;
+        input += num;
+        renderDisplay();
+      };
+
+      window.lockDelete = function () {
+        input = input.slice(0, -1);
+        renderDisplay();
+      };
+
+      window.lockConfirm = function () {
+        if (input === PASSWORD) {
+          lockScreen.classList.add("hide");
+          document.body.classList.remove("locked");
+          setTimeout(() => {
+            lockScreen.style.display = "none";
+          }, 400);
+          setTimeout(function () {
+            if (typeof window.startBgm === "function") window.startBgm();
+          }, 300);
+        } else {
+          lockDisplay.classList.add("error");
+          setTimeout(() => {
+            lockDisplay.classList.remove("error");
+            input = "";
+            renderDisplay();
+          }, 450);
+        }
+      };
+    })();
+
+    let beimadaiUnlocked = false;
+    let eggShowing = false;
+
+    (function () {
+      const PASSWORD = "9178";
+      let input = "";
+      const lockScreen = document.getElementById("beimadaiLock");
+      const lockDisplay = document.getElementById("beimadaiLockDisplay");
+
+      function renderDisplay() {
+        lockDisplay.innerHTML = "";
+        for (let i = 0; i < input.length; i++) {
+          const span = document.createElement("span");
+          span.className = "digit";
+          span.textContent = input[i];
+          lockDisplay.appendChild(span);
+        }
+      }
+
+      window.beimadaiInput = function (num) {
+        if (input.length >= 4) return;
+        input += num;
+        renderDisplay();
+      };
+
+      window.beimadaiDelete = function () {
+        input = input.slice(0, -1);
+        renderDisplay();
+      };
+
+      window.beimadaiConfirm = function () {
+        if (input === PASSWORD) {
+          beimadaiUnlocked = true;
+          lockScreen.style.display = "none";
+          input = "";
+          renderDisplay();
+          document.getElementById("beimadaiTab").classList.remove("hidden-tab");
+          document.getElementById("beimadaiTab").click();
+          showEgg();
+        } else {
+          lockDisplay.classList.add("error");
+          setTimeout(() => {
+            lockDisplay.classList.remove("error");
+            input = "";
+            renderDisplay();
+          }, 450);
+        }
+      };
+
+      window.closeBeimadaiLock = function () {
+        lockScreen.style.display = "none";
+        input = "";
+        renderDisplay();
+      };
+    })();
+
+    const IMAGES = ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png", "10.png", "11.png","12.png","13.png","14.png","15.png"];
     const VIDEOS = [
       { name: "a.mp4", src: "a.mp4" },
-      { name: "b.mp4", src: "b.mp4" }
+      { name: "b.mp4", src: "b.mp4" },
+      { name: "c.mp4", src: "c.mp4" },
+      { name: "d.mp4", src: "d.mp4" },
+      { name: "e.mp4", src: "e.mp4" }
     ];
     const MUSIC_LIST = [
       { name: "大山子孙音乐", file: "dszs.mp3" },
       { name: "郭佑斌音乐", file: "gyb.mp3" },
       { name: "廖彩云音乐", file: "lcy.mp3" },
       { name: "尿颠玉音乐", file: "ndy.mp3" },
-      { name: "许丽君音乐", file: "xlj.mp3" }
+      { name: "许丽君音乐", file: "xlj.mp3" },
+      { name: "尿颠玉2音乐", file: "ndy2.mp3" },
+      { name: "谢北方音乐", file: "xbf.mp3" },
+      { name: "天成音乐", file: "htc.mp3" },
+      { name: "付伟超音乐", file: "fwc.mp3" }
     ];
 
-    /* ============================================================
-       全局状态
-       ============================================================ */
+    const HTC_IMAGES = ["tcbmd.jpg"];
+    const HTC_VIDEOS = ["tcbmd2.mp4", "tcbmd3.mp4"];
+    const ZCX_IMAGES = ["zcxbmd1.jpg", "zcxbmd2.jpg", "zcxbmd3.jpg", "zcxbmd4.jpg", "zcxbmd5.jpg", "zcxbmd6.jpg"];
+    const ZCX_VIDEOS = ["zcxbmd7.mp4", "zcxbmd8.mp4", "zcxbmd9.mp4"];
+
     const bgmAudio = document.getElementById("bgmAudio");
     const musicPlayer = document.getElementById("musicPlayer");
+    const naziAudio = document.getElementById("naziAudio");
+    const bgmBar = document.getElementById("bgmBar");
     const bgmToggle = document.getElementById("bgmToggle");
     const musicToast = document.getElementById("musicToast");
     const toastText = document.getElementById("toastText");
+    const musicPlayPauseBtn = document.getElementById("musicPlayPause");
+    const musicDiscEl = document.getElementById("musicDisc");
+    const naziGrid = document.getElementById("naziGrid");
+    const naziBtn = document.getElementById("naziBtn");
+    const beimadaiGrid = document.getElementById("beimadaiGrid");
+    const siteTitle = document.getElementById("siteTitle");
+    const eggScreen = document.getElementById("eggScreen");
+
     let bgmEnabled = true;
     let currentMusicIndex = -1;
     let musicPausedByUser = false;
+    let currentTab = "img";
+    let lastNaziTime = 0;
+    let titleClickCount = 0;
+    let titleClickTimer = null;
 
-    /* ============================================================
-       背景音乐控制
-       ============================================================ */
-    function tryPlayBgm() {
+    bgmAudio.volume = 1.0;
+
+    function showEgg() {
+      if (eggShowing) return;
+      eggShowing = true;
+      eggScreen.classList.remove("fade-out");
+      eggScreen.classList.add("show");
+      setTimeout(function () {
+        eggScreen.classList.add("fade-out");
+        setTimeout(function () {
+          eggScreen.classList.remove("show");
+          eggScreen.classList.remove("fade-out");
+          eggShowing = false;
+        }, 700);
+      }, 3000);
+    }
+
+    function updatePlayPauseButton() {
+      if (musicPlayer.paused) {
+        musicPlayPauseBtn.textContent = "▶";
+        musicDiscEl.classList.add("paused");
+      } else {
+        musicPlayPauseBtn.textContent = "⏸";
+        musicDiscEl.classList.remove("paused");
+      }
+    }
+
+    function updateBgmBarState() {
+      const musicActive = (currentMusicIndex !== -1 && !musicPlayer.paused);
+      const videoTab = (currentTab === "video");
+      if (musicActive || videoTab) {
+        bgmBar.classList.add("disabled");
+        bgmToggle.textContent = "背景音乐无法播放";
+        bgmToggle.disabled = true;
+      } else {
+        bgmBar.classList.remove("disabled");
+        bgmToggle.disabled = false;
+        if (bgmEnabled) {
+          bgmToggle.textContent = "关闭";
+          bgmToggle.classList.add("active");
+        } else {
+          bgmToggle.textContent = "播放";
+          bgmToggle.classList.remove("active");
+        }
+      }
+    }
+
+    window.startBgm = function () {
       if (!bgmEnabled) return;
       if (currentMusicIndex !== -1 && !musicPlayer.paused) return;
-      bgmAudio.volume = 0.45;
+      if (currentTab === "video") return;
+      bgmAudio.volume = 1.0;
       bgmAudio.play().catch(() => {});
-    }
+      updateBgmBarState();
+    };
 
-    function onFirstInteraction() {
-      if (bgmEnabled && bgmAudio.paused && (currentMusicIndex === -1 || musicPlayer.paused)) {
-        bgmAudio.play().catch(() => {});
-      }
-      document.removeEventListener("click", onFirstInteraction);
-      document.removeEventListener("touchstart", onFirstInteraction);
+    function tryPlayBgm() {
+      if (!bgmEnabled) return;
+      if (document.body.classList.contains("locked")) return;
+      if (currentMusicIndex !== -1 && !musicPlayer.paused) return;
+      if (currentTab === "video") return;
+      bgmAudio.volume = 1.0;
+      bgmAudio.play().catch(() => {});
+      updateBgmBarState();
     }
-    document.addEventListener("click", onFirstInteraction);
-    document.addEventListener("touchstart", onFirstInteraction);
-    window.addEventListener("load", tryPlayBgm);
 
     function toggleBgm() {
+      if (bgmBar.classList.contains("disabled")) return;
       if (bgmEnabled) {
         bgmEnabled = false;
         bgmAudio.pause();
-        bgmToggle.textContent = "播放";
-        bgmToggle.classList.remove("active");
       } else {
         bgmEnabled = true;
         if (currentMusicIndex === -1 || musicPlayer.paused) {
-          bgmAudio.play().catch(() => {});
+          if (currentTab !== "video") {
+            bgmAudio.volume = 1.0;
+            bgmAudio.play().catch(() => {});
+          }
         }
-        bgmToggle.textContent = "关闭";
-        bgmToggle.classList.add("active");
       }
+      updateBgmBarState();
     }
 
-    /* ============================================================
-       左上角音乐提示
-       ============================================================ */
     function showMusicToast(name, playing) {
       toastText.textContent = playing ? name : name + "（已暂停）";
+      if (playing) musicToast.classList.remove("paused");
+      else musicToast.classList.add("paused");
       musicToast.classList.add("show");
     }
 
     function hideMusicToast() {
       musicToast.classList.remove("show");
+      musicToast.classList.remove("paused");
     }
 
-    /* ============================================================
-       音乐播放控制
-       ============================================================ */
     function stopMusic(silent) {
       musicPlayer.pause();
       musicPlayer.src = "";
@@ -669,9 +1438,13 @@
       musicPausedByUser = false;
       updateMusicListHighlight();
       hideMusicToast();
-      if (!silent && bgmEnabled) {
+      closeMusicModal();
+      updatePlayPauseButton();
+      if (!silent && bgmEnabled && currentTab !== "video") {
+        bgmAudio.volume = 1.0;
         bgmAudio.play().catch(() => {});
       }
+      updateBgmBarState();
     }
 
     function playMusic(index) {
@@ -702,6 +1475,7 @@
 
       showMusicToast(music.name, true);
       openMusicModal();
+      updateBgmBarState();
     }
 
     musicPlayer.addEventListener("ended", function () {
@@ -710,10 +1484,31 @@
       musicPausedByUser = false;
       const cards = document.querySelectorAll(".music-card");
       if (cards[endedIndex]) cards[endedIndex].classList.remove("playing");
-      if (bgmEnabled) bgmAudio.play().catch(() => {});
+      if (bgmEnabled && currentTab !== "video") {
+        bgmAudio.volume = 1.0;
+        bgmAudio.play().catch(() => {});
+      }
       hideMusicToast();
       updateMusicListHighlight();
       closeMusicModal();
+      updatePlayPauseButton();
+      updateBgmBarState();
+    });
+
+    musicPlayer.addEventListener("pause", function () {
+      updatePlayPauseButton();
+      if (currentMusicIndex !== -1 && !musicPlayer.ended && musicPlayer.src) {
+        showMusicToast(MUSIC_LIST[currentMusicIndex].name, false);
+      }
+      updateBgmBarState();
+    });
+
+    musicPlayer.addEventListener("play", function () {
+      updatePlayPauseButton();
+      if (currentMusicIndex !== -1) {
+        showMusicToast(MUSIC_LIST[currentMusicIndex].name, true);
+      }
+      updateBgmBarState();
     });
 
     function updateProgress() {
@@ -742,31 +1537,11 @@
       if (musicPlayer.duration) musicPlayer.currentTime = percent * musicPlayer.duration;
     });
 
-    /* ============================================================
-       播放 / 暂停
-       ============================================================ */
     function toggleMusicPlay() {
       if (musicPlayer.paused) {
         musicPlayer.play().catch(() => {});
-        document.getElementById("musicPlayPause").textContent = "⏸";
-        document.getElementById("musicDisc").classList.remove("paused");
-        musicPausedByUser = false;
-        bgmAudio.pause();
-        if (currentMusicIndex !== -1) {
-          showMusicToast(MUSIC_LIST[currentMusicIndex].name, true);
-        }
       } else {
         musicPlayer.pause();
-        document.getElementById("musicPlayPause").textContent = "▶";
-        document.getElementById("musicDisc").classList.add("paused");
-        musicPausedByUser = true;
-
-        if (bgmEnabled) {
-          bgmAudio.play().catch(() => {});
-        }
-        if (currentMusicIndex !== -1) {
-          showMusicToast(MUSIC_LIST[currentMusicIndex].name, false);
-        }
       }
     }
 
@@ -782,21 +1557,13 @@
       playMusic(newIndex);
     }
 
-    /* ============================================================
-       音乐弹窗
-       ============================================================ */
     const musicModal = document.getElementById("musicModal");
 
     function openMusicModal() {
       if (currentMusicIndex === -1) return;
       const music = MUSIC_LIST[currentMusicIndex];
       document.getElementById("musicTitle").textContent = music.name;
-      document.getElementById("musicPlayPause").textContent = musicPlayer.paused ? "▶" : "⏸";
-      if (musicPlayer.paused) {
-        document.getElementById("musicDisc").classList.add("paused");
-      } else {
-        document.getElementById("musicDisc").classList.remove("paused");
-      }
+      updatePlayPauseButton();
       musicModal.classList.add("show");
       updateProgress();
       updateMusicListHighlight();
@@ -811,9 +1578,6 @@
       if (e.target === musicModal) closeMusicModal();
     });
 
-    /* ============================================================
-       音乐列表
-       ============================================================ */
     const musicListScroll = document.getElementById("musicListScroll");
 
     function renderMusicList() {
@@ -841,9 +1605,6 @@
       if (activeItem) activeItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
-    /* ============================================================
-       渲染图片网格
-       ============================================================ */
     const imgGrid = document.getElementById("imgGrid");
     IMAGES.forEach((src, i) => {
       const card = document.createElement("div");
@@ -865,9 +1626,6 @@
       imgGrid.appendChild(card);
     });
 
-    /* ============================================================
-       渲染视频网格
-       ============================================================ */
     const videoGrid = document.getElementById("videoGrid");
     VIDEOS.forEach((v, i) => {
       const card = document.createElement("div");
@@ -897,9 +1655,6 @@
       videoGrid.appendChild(card);
     });
 
-    /* ============================================================
-       渲染音乐网格
-       ============================================================ */
     const musicGrid = document.getElementById("musicGrid");
     MUSIC_LIST.forEach((m, i) => {
       const card = document.createElement("div");
@@ -909,36 +1664,99 @@
       musicGrid.appendChild(card);
     });
 
-    /* ============================================================
-       分类切换
-       ============================================================ */
+    function buildMediaGrid(container, items, type) {
+      container.innerHTML = "";
+      items.forEach((item, i) => {
+        const card = document.createElement("div");
+        if (type === "img") {
+          card.className = "card";
+          const img = document.createElement("img");
+          img.src = item;
+          img.alt = "图片";
+          img.loading = "lazy";
+          img.onerror = function () {
+            this.style.display = "none";
+            card.style.background = "linear-gradient(145deg, #1a2a1e, #0e1a12)";
+            const tip = document.createElement("div");
+            tip.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#4a6a50;font-size:12px;text-align:center;";
+            tip.textContent = "加载失败";
+            card.appendChild(tip);
+          };
+          card.appendChild(img);
+          card.onclick = () => openMediaList("img", items, i);
+        } else {
+          card.className = "card video-card";
+          const vid = document.createElement("video");
+          vid.src = item;
+          vid.muted = true;
+          vid.preload = "metadata";
+          vid.setAttribute("playsinline", "");
+          vid.onerror = function () {
+            this.style.display = "none";
+            card.style.background = "linear-gradient(145deg, #1a2a1e, #0e1a12)";
+            const tip = document.createElement("div");
+            tip.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#4a6a50;font-size:12px;text-align:center;";
+            tip.textContent = "加载失败";
+            card.appendChild(tip);
+          };
+          const playIcon = document.createElement("div");
+          playIcon.className = "play-icon";
+          playIcon.textContent = "▶";
+          card.appendChild(vid);
+          card.appendChild(playIcon);
+          card.onclick = () => openMediaList("video", items, i);
+        }
+        container.appendChild(card);
+      });
+    }
+
+    buildMediaGrid(document.getElementById("htcImgGrid"), HTC_IMAGES, "img");
+    buildMediaGrid(document.getElementById("htcVideoGrid"), HTC_VIDEOS, "video");
+    buildMediaGrid(document.getElementById("zcxImgGrid"), ZCX_IMAGES, "img");
+    buildMediaGrid(document.getElementById("zcxVideoGrid"), ZCX_VIDEOS, "video");
+
     function switchTab(type, btn) {
       document.querySelectorAll(".tab-bar button").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
 
+      currentTab = type;
       imgGrid.style.display = type === "img" ? "grid" : "none";
       videoGrid.style.display = type === "video" ? "grid" : "none";
       musicGrid.style.display = type === "music" ? "grid" : "none";
+      naziGrid.classList.toggle("show", type === "nazi");
+      beimadaiGrid.classList.toggle("show", type === "beimadai");
 
       if (type === "video") {
         bgmAudio.pause();
       } else {
         if (bgmEnabled && (currentMusicIndex === -1 || musicPlayer.paused)) {
+          bgmAudio.volume = 1.0;
           bgmAudio.play().catch(() => {});
         }
       }
+      updateBgmBarState();
     }
 
-    /* ============================================================
-       媒体模态框（图片/视频）
-       ============================================================ */
+    function naziPlay() {
+      const now = Date.now();
+      if (now - lastNaziTime < 1000) return;
+      lastNaziTime = now;
+      naziAudio.currentTime = 0;
+      naziAudio.volume = 1.0;
+      naziAudio.play().catch(() => {});
+      naziBtn.classList.add("pressed");
+      setTimeout(() => naziBtn.classList.remove("pressed"), 180);
+    }
+
     const mediaModal = document.getElementById("mediaModal");
     const modalImg = document.getElementById("modalImg");
     const modalVideo = document.getElementById("modalVideo");
     let currentMediaType = "img";
     let currentMediaIndex = 0;
+    let currentMediaArray = IMAGES;
 
     function openMedia(type, index) {
+      currentMediaArray = (type === "img") ? IMAGES : VIDEOS.map(v => v.src);
       currentMediaType = type;
       currentMediaIndex = index;
 
@@ -946,52 +1764,64 @@
         bgmAudio.pause();
       } else {
         if (bgmEnabled && (currentMusicIndex === -1 || musicPlayer.paused)) {
+          bgmAudio.volume = 1.0;
           bgmAudio.play().catch(() => {});
         }
       }
 
       showMedia();
       mediaModal.classList.add("show");
+      updateBgmBarState();
+    }
+
+    function openMediaList(type, arr, index) {
+      currentMediaArray = arr;
+      currentMediaType = type;
+      currentMediaIndex = index;
+
+      if (type === "video") {
+        bgmAudio.pause();
+      } else {
+        if (bgmEnabled && (currentMusicIndex === -1 || musicPlayer.paused)) {
+          bgmAudio.volume = 1.0;
+          bgmAudio.play().catch(() => {});
+        }
+      }
+
+      showMedia();
+      mediaModal.classList.add("show");
+      updateBgmBarState();
     }
 
     function showMedia() {
       if (currentMediaType === "img") {
-        modalImg.src = IMAGES[currentMediaIndex];
+        modalImg.src = currentMediaArray[currentMediaIndex];
         modalImg.style.display = "block";
         modalVideo.style.display = "none";
         modalVideo.pause();
         modalVideo.src = "";
-        document.getElementById("mediaHint").textContent = `图片 ${currentMediaIndex + 1} / ${IMAGES.length} · 点击左右箭头切换`;
+        document.getElementById("mediaHint").textContent = `图片 ${currentMediaIndex + 1} / ${currentMediaArray.length} · 点击左右箭头切换`;
       } else {
-        modalVideo.src = VIDEOS[currentMediaIndex].src;
+        modalVideo.src = currentMediaArray[currentMediaIndex];
         modalVideo.style.display = "block";
         modalImg.style.display = "none";
         modalImg.src = "";
         modalVideo.play().catch(() => {});
-        document.getElementById("mediaHint").textContent = `视频 ${currentMediaIndex + 1} / ${VIDEOS.length} · 点击左右箭头切换`;
+        document.getElementById("mediaHint").textContent = `视频 ${currentMediaIndex + 1} / ${currentMediaArray.length} · 点击左右箭头切换`;
       }
 
-      const showNav = (currentMediaType === "img" && IMAGES.length > 1) ||
-                      (currentMediaType === "video" && VIDEOS.length > 1);
+      const showNav = currentMediaArray.length > 1;
       document.getElementById("mediaPrev").style.display = showNav ? "block" : "none";
       document.getElementById("mediaNext").style.display = showNav ? "block" : "none";
     }
 
     function prevMedia() {
-      if (currentMediaType === "img") {
-        currentMediaIndex = (currentMediaIndex - 1 + IMAGES.length) % IMAGES.length;
-      } else {
-        currentMediaIndex = (currentMediaIndex - 1 + VIDEOS.length) % VIDEOS.length;
-      }
+      currentMediaIndex = (currentMediaIndex - 1 + currentMediaArray.length) % currentMediaArray.length;
       showMedia();
     }
 
     function nextMedia() {
-      if (currentMediaType === "img") {
-        currentMediaIndex = (currentMediaIndex + 1) % IMAGES.length;
-      } else {
-        currentMediaIndex = (currentMediaIndex + 1) % VIDEOS.length;
-      }
+      currentMediaIndex = (currentMediaIndex + 1) % currentMediaArray.length;
       showMedia();
     }
 
@@ -1001,18 +1831,17 @@
       modalVideo.src = "";
       modalImg.src = "";
 
-      if (bgmEnabled && (currentMusicIndex === -1 || musicPlayer.paused)) {
+      if (bgmEnabled && (currentMusicIndex === -1 || musicPlayer.paused) && currentTab !== "video") {
+        bgmAudio.volume = 1.0;
         bgmAudio.play().catch(() => {});
       }
+      updateBgmBarState();
     }
 
     mediaModal.onclick = function (e) {
       if (e.target === mediaModal) closeMediaModal();
     };
 
-    /* ============================================================
-       键盘控制
-       ============================================================ */
     document.addEventListener("keydown", function (e) {
       if (mediaModal.classList.contains("show")) {
         if (e.key === "Escape") closeMediaModal();
@@ -1028,11 +1857,25 @@
       }
     });
 
-    /* ============================================================
-       初始化
-       ============================================================ */
+    siteTitle.addEventListener("click", function () {
+      if (beimadaiUnlocked || eggShowing) return;
+      const beimadaiLockEl = document.getElementById("beimadaiLock");
+      if (beimadaiLockEl && beimadaiLockEl.style.display === "flex") return;
+      titleClickCount++;
+      if (titleClickTimer) clearTimeout(titleClickTimer);
+      titleClickTimer = setTimeout(function () {
+        titleClickCount = 0;
+      }, 1500);
+      if (titleClickCount >= 5) {
+        titleClickCount = 0;
+        clearTimeout(titleClickTimer);
+        document.getElementById("beimadaiLock").style.display = "flex";
+      }
+    });
+
     renderMusicList();
-    setTimeout(tryPlayBgm, 300);
+    updatePlayPauseButton();
+    updateBgmBarState();
   </script>
 
 </body>
